@@ -1,13 +1,16 @@
 from dataclasses import dataclass
+from datetime import datetime
 import logging
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
 from playwright.sync_api import sync_playwright, Page
 
+from app.config import BASE_URL, TENDERS_PATH
+from app.models import Tender
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-BASE_URL = "https://bip.zambrow.pl"
-TENDERS_PATH = "/zamowienia-publiczne"
+
 CONTENT_SELECTOR = "article#content"
 ROW_SELECTOR = "table tr"
 
@@ -17,6 +20,18 @@ class TenderDTO:
     title: str
     link: str
     date: str
+
+    def to_model(self) -> Tender:
+        try:
+            parsed_date = datetime.strptime(self.date, "%Y-%m-%d")
+        except ValueError:
+            parsed_date = None 
+
+        return Tender(
+            title=self.title,
+            link=self.link,
+            date=parsed_date
+        )
 
 
 def parse_row_to_dto(
