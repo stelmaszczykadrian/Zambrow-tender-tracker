@@ -10,9 +10,7 @@ class DatabaseManager:
     def __init__(self, db_url: str, engine_kwargs: dict):
         self.engine = create_engine(db_url, **engine_kwargs)
         self.session_factory = sessionmaker(
-            autocommit=False, 
-            autoflush=False, 
-            bind=self.engine
+            autocommit=False, autoflush=False, bind=self.engine
         )
 
     def init_db(self):
@@ -22,7 +20,4 @@ class DatabaseManager:
         return self.session_factory()
 
 
-db_manager = DatabaseManager(
-    db_url=DATABASE_URL, 
-    engine_kwargs=ENGINE_KWARGS
-)
+db_manager = DatabaseManager(db_url=DATABASE_URL, engine_kwargs=ENGINE_KWARGS)
