@@ -25,13 +25,9 @@ class TenderDTO:
         try:
             parsed_date = datetime.strptime(self.date, "%Y-%m-%d")
         except ValueError:
-            parsed_date = None 
+            parsed_date = None
 
-        return Tender(
-            title=self.title,
-            link=self.link,
-            date=parsed_date
-        )
+        return Tender(title=self.title, link=self.link, date=parsed_date)
 
 
 def parse_row_to_dto(
@@ -47,9 +43,17 @@ def parse_row_to_dto(
     )
 
 
-def clean_date(raw_date: str) -> str:
-    parts = raw_date.strip().split()
-    return parts[0] if parts else ""
+def clean_date(raw: str) -> str:
+    if not raw:
+        return ""
+
+    first_part = raw.strip().split()[0]
+
+    try:
+        datetime.strptime(first_part, "%Y-%m-%d")
+        return first_part
+    except ValueError:
+        return ""
 
 
 def get_tenders_from_page(page: Page) -> List[TenderDTO]:
